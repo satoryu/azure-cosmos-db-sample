@@ -55,7 +55,7 @@
         "documentTypeCosmos": {
             "type": "object",
             "value": {
-                "MONGODB_URL": "[concat('mongodb://', variables('documentAccountName'), ':', listKeys(concat('Microsoft.DocumentDB/databaseAccounts/', variables('documentAccountName')), '2015-04-08').primaryMasterKey, '@', variables('documentAccountName'), '.documents.azure.com:2015/?ssl=true')]",
+                "MONGODB_URL": "[concat('mongodb://', variables('documentAccountName'), ':', listKeys(concat('Microsoft.DocumentDB/databaseAccounts/', variables('documentAccountName')), '2015-04-08').primaryMasterKey, '@', variables('documentAccountName'), '.documents.azure.com:10255/?ssl=true')]",
                 "DOCUMENTDB_HOST": "[concat('https://', variables('documentAccountName'), '.documents.azure.com:443/')]",
                 "DOCUMENTDB_KEY": "[listKeys(concat('Microsoft.DocumentDB/databaseAccounts/', variables('documentAccountName')), '2015-04-08').primaryMasterKey]"
             }
