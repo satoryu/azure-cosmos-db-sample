@@ -1,0 +1,64 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+    },
+    "variables": {
+        "mongoAccountName": "[concat('mongo-', uniqueString(subscription().id))]",
+        "documentAccountName": "[concat('document-', uniqueString(subscription().id))]"
+    },
+    "resources": [
+        {
+            "comments": "Azure Cosmos DB(DocumentDB API)",
+            "type": "Microsoft.DocumentDB/databaseAccounts",
+            "kind": "GlobalDocumentDB",
+            "name": "[variables('documentAccountName')]",
+            "apiVersion": "2015-04-08",
+            "location": "[resourceGroup().location]",
+            "properties": {
+                "databaseAccountOfferType": "Standard",
+                "consistencyPolicy": {
+                    "defaultConsistencyLevel": "Session",
+                    "maxIntervalInSeconds": 5,
+                    "maxStalenessPrefix": 100
+                },
+                "name": "[variables('documentAccountName')]"
+            }
+        },
+        {
+            "comments": "Azure Cosmos DB(MongoDB API)",
+            "type": "Microsoft.DocumentDB/databaseAccounts",
+            "kind": "MongoDB",
+            "name": "[variables('mongoAccountName')]",
+            "apiVersion": "2015-04-08",
+            "location": "[resourceGroup().location]",
+            "properties": {
+                "databaseAccountOfferType": "Standard",
+                "consistencyPolicy": {
+                    "defaultConsistencyLevel": "Session",
+                    "maxIntervalInSeconds": 5,
+                    "maxStalenessPrefix": 100
+                },
+                "name": "[variables('mongoAccountName')]"
+            }
+        }
+    ],
+    "outputs": {
+        "mongoTypeCosmos": {
+            "type": "object",
+            "value": {
+                "MONGODB_URL": "[listConnectionStrings(concat('Microsoft.DocumentDB/databaseAccounts/', variables('mongoAccountName')), '2015-04-08').connectionStrings[0].connectionString]",
+                "DOCUMENTDB_HOST": "[concat('https://', variables('mongoAccountName'), '.documents.azure.com:443/')]",
+                "DOCUMENTDB_KEY": "[listKeys(concat('Microsoft.DocumentDB/databaseAccounts/', variables('mongoAccountName')), '2015-04-08').primaryMasterKey]"
+            }
+        },
+        "documentTypeCosmos": {
+            "type": "object",
+            "value": {
+                "MONGODB_URL": "[concat('mongodb://', variables('documentAccountName'), ':', listKeys(concat('Microsoft.DocumentDB/databaseAccounts/', variables('documentAccountName')), '2015-04-08').primaryMasterKey, '@', variables('documentAccountName'), '.documents.azure.com:2015/?ssl=true')]",
+                "DOCUMENTDB_HOST": "[concat('https://', variables('documentAccountName'), '.documents.azure.com:443/')]",
+                "DOCUMENTDB_KEY": "[listKeys(concat('Microsoft.DocumentDB/databaseAccounts/', variables('documentAccountName')), '2015-04-08').primaryMasterKey]"
+            }
+        }
+    }
+}
